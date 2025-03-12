@@ -1,12 +1,19 @@
+//✅Този ред импортира хука useState, който позволява управлението на състоянието в компоненти той се използва в компонента FilterableProductTable, за да съхранява:
 import { useState } from "react";
 
+//✅Главен компонент: FilterableProductTable
 function FilterableProductTable({ products }) {
   const [filterText, setFilterText] = useState("");
+  //✅Този компонент държи в състоянието filterText
   const [inStockOnly, setInStockOnly] = useState(false);
+  //✅И inStockOnly.
 
   return (
     <div>
-      <SearchBar
+      {/* ✅Те се предават към SearchBar за контролиране на входните полета и към 
+      ProductTable, за да се филтрират продуктите.*/}
+
+      <SearchBar //✅Филтър за търсене: SearchBar
         filterText={filterText}
         inStockOnly={inStockOnly}
         onFilterTextChange={setFilterText}
@@ -21,19 +28,24 @@ function FilterableProductTable({ products }) {
   );
 }
 
+//✅Категория на продукта: ProductCategoryRow.
 function ProductCategoryRow({ category }) {
   return (
     <tr>
       <th colSpan="2">{category}</th>
     </tr>
   );
+  //✅Този компонент просто показва заглавие за категорията в таблицата.
 }
 
+//✅Продукт: ProductRow
 function ProductRow({ product }) {
   const name = product.stocked ? (
+    //✅Ако продуктът е наличен (stocked е true), името се показва нормално.
     product.name
   ) : (
     <span style={{ color: "red" }}>{product.name}</span>
+    //✅Ако продуктът не е наличен, името се оцветява в червено.
   );
 
   return (
@@ -44,12 +56,15 @@ function ProductRow({ product }) {
   );
 }
 
+//✅Таблица с продукти: ProductTable
 function ProductTable({ products, filterText, inStockOnly }) {
   const rows = [];
   let lastCategory = null;
 
   products.forEach((product) => {
     if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1) {
+      //✅Филтрира-filterText и inStockOnly.
+      //✅Добавя заглавен ред за всяка категория, ако се среща за първи път.
       return;
     }
     if (inStockOnly && !product.stocked) {
@@ -65,6 +80,7 @@ function ProductTable({ products, filterText, inStockOnly }) {
     }
     rows.push(<ProductRow product={product} key={product.name} />);
     lastCategory = product.category;
+    //✅Сортира продуктите в таблица.
   });
 
   return (
@@ -89,6 +105,7 @@ function SearchBar({
   return (
     <form>
       <input
+        //✅Текстово поле (input[type="text"]) за въвеждане на търсената дума. При промяна извиква onFilterTextChange, за да обнови състоянието в FilterableProductTable.
         type="text"
         value={filterText}
         placeholder="Search..."
@@ -96,6 +113,7 @@ function SearchBar({
       />
       <label>
         <input
+          //✅Чекбокс (input[type="checkbox"]), който позволява показване само на налични продукти. При промяна извиква onInStockOnlyChange.
           type="checkbox"
           checked={inStockOnly}
           onChange={(e) => onInStockOnlyChange(e.target.checked)}
@@ -106,6 +124,8 @@ function SearchBar({
   );
 }
 
+//✅Масив с примерни продукти
+//✅масив съдържа продукти с категории, имена, цени и информация за наличност.
 const PRODUCTS = [
   { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
   { category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
@@ -118,3 +138,4 @@ const PRODUCTS = [
 export default function App() {
   return <FilterableProductTable products={PRODUCTS} />;
 }
+//✅основният компонент, който рендерира FilterableProductTable с предоставения списък от продукти.
